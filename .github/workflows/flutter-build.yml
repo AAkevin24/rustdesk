@@ -92,6 +92,23 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Injetar Configurações da Empresa
+        run: |
+          # Define o arquivo alvo dentro do submódulo
+          CONFIG_FILE=libs/hbb_common/src/config.rs
+
+          # Força o Servidor de ID
+          sed -i 's/id_server: ".*".to_owned()/id_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
+
+          # Força o Servidor de Relay
+          sed -i 's/relay_server: ".*".to_owned()/relay_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
+
+          # Força a Chave Pública (Coloque a sua chave real abaixo)
+          sed -i 's/key: ".*".to_owned()/key: "tslK28g7URg5Du0NHaAOEGTV8Bu3mrGHjNlmLv1foVA=".to_owned()/' $CONFIG_FILE
+          
+          # Confirmação no log (opcional)
+          grep "cmt-remoto" $CONFIG_FILE
+
       - name: Restore bridge files
         uses: actions/download-artifact@master
         with:
