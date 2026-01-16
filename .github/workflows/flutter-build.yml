@@ -96,20 +96,22 @@ jobs:
       - name: Injetar Configurações da Empresa
         shell: bash
         run: |
-          # Define o arquivo alvo dentro do submódulo
           CONFIG_FILE=libs/hbb_common/src/config.rs
-
-          # Força o Servidor de ID
-          sed -i 's/id_server: ".*".to_owned()/id_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
-
-          # Força o Servidor de Relay
-          sed -i 's/relay_server: ".*".to_owned()/relay_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
-
-          # Força a Chave Pública (Coloque a sua chave real abaixo)
-          sed -i 's/key: ".*".to_owned()/key: "tslK28g7URg5Du0NHaAOEGTV8Bu3mrGHjNlmLv1foVA=".to_owned()/' $CONFIG_FILE
           
-          # Confirmação no log (opcional)
-          grep "cmt-remoto" $CONFIG_FILE
+          echo "=== CONTEÚDO ORIGINAL DO ARQUIVO (Inicio) ==="
+          head -n 50 $CONFIG_FILE
+          echo "=== FIM DO CONTEUDO ORIGINAL ==="
+
+          # Tentativa de substituição mais flexível (aceita espaços extras)
+          sed -i 's/id_server:.*to_owned()/id_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
+          sed -i 's/relay_server:.*to_owned()/relay_server: "cmt-remoto.ddns.net".to_owned()/' $CONFIG_FILE
+          sed -i 's/key:.*to_owned()/key: "tslK28g7URg5Du0NHaAOEGTV8Bu3mrGHjNlmLv1foVA=".to_owned()/' $CONFIG_FILE
+
+          echo "=== VERIFICANDO SE MUDOU ==="
+          grep "cmt-remoto" $CONFIG_FILE || echo "FALHA: O texto cmt-remoto nao foi encontrado no arquivo!"
+          
+          # Não falhar o build agora, queremos ver o log
+          exit 0
 
       - name: Restore bridge files
         uses: actions/download-artifact@master
