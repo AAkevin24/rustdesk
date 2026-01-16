@@ -94,6 +94,7 @@ jobs:
           submodules: recursive
 
       - name: Injetar Configurações da Empresa
+        shell: bash
         run: |
           # Define o arquivo alvo dentro do submódulo
           CONFIG_FILE=libs/hbb_common/src/config.rs
